@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 import boto3
-from botocore.exceptions import ClientError
+from botocore.exceptions import ClientError, ProfileNotFound
 
 
 def parse_args() -> argparse.Namespace:
@@ -76,6 +76,22 @@ def build_session(args: argparse.Namespace) -> boto3.Session:
         )
 
     return boto3.Session(profile_name=args.profile, region_name=args.region)
+
+
+def build_profile_error_message(args: argparse.Namespace, error: ProfileNotFound) -> str:
+    available_profiles = boto3.session.Session().available_profiles
+    profile_help = (
+        ", ".join(sorted(available_profiles))
+        if available_profiles
+        else "none detected"
+    )
+    profile_name = args.profile or "<not provided>"
+    return (
+        f"AWS profile '{profile_name}' was not found ({error}).\n"
+        "If you copied an example command, replace placeholder values with your real profile.\n"
+        "Run 'aws configure list-profiles' to see configured profiles.\n"
+        f"Detected profiles: {profile_help}"
+    )
 
 
 def fetch_rds_instances(rds_client) -> List[Dict[str, object]]:
@@ -313,7 +329,12 @@ def write_outputs(
 
 def main() -> int:
     args = parse_args()
-    session = build_session(args)
+    try:
+        session = build_session(args)
+    except ProfileNotFound as error:
+        print(build_profile_error_message(args, error))
+        return 1
+
     rds_client = session.client("rds", region_name=args.region)
     ec2_client = session.client("ec2", region_name=args.region)
     cloudwatch_client = session.client("cloudwatch", region_name=args.region)
