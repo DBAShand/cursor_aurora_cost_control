@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 
 import boto3
-from botocore.exceptions import ClientError
+from botocore.exceptions import ClientError, ProfileNotFound
 
 
 BILLING_NAMESPACE = "AWS/Billing"
@@ -31,6 +31,14 @@ class MetricTarget:
 
     label: str
     dimensions: List[Dict[str, str]]
+
+
+def profile_not_found_message(profile_name: str) -> str:
+    return (
+        f"AWS profile '{profile_name}' was not found.\n"
+        "Use a real configured AWS profile name, or omit --profile to use environment/default credentials.\n"
+        "To see configured profiles, run: aws configure list-profiles"
+    )
 
 
 def parse_args() -> argparse.Namespace:
@@ -76,7 +84,13 @@ def parse_args() -> argparse.Namespace:
 
 def build_session(args: argparse.Namespace) -> boto3.Session:
     if args.role_arn:
-        base_session = boto3.Session(profile_name=args.profile) if args.profile else boto3.Session()
+        try:
+            base_session = (
+                boto3.Session(profile_name=args.profile) if args.profile else boto3.Session()
+            )
+        except ProfileNotFound:
+            print(profile_not_found_message(args.profile))
+            raise SystemExit(2)
         sts = base_session.client("sts")
         assume_role_args = {
             "RoleArn": args.role_arn,
@@ -92,7 +106,11 @@ def build_session(args: argparse.Namespace) -> boto3.Session:
             region_name=BILLING_REGION,
         )
 
-    return boto3.Session(profile_name=args.profile, region_name=BILLING_REGION)
+    try:
+        return boto3.Session(profile_name=args.profile, region_name=BILLING_REGION)
+    except ProfileNotFound:
+        print(profile_not_found_message(args.profile))
+        raise SystemExit(2)
 
 
 def discover_services(

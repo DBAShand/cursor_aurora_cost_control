@@ -43,6 +43,7 @@ python3 scripts/pull_billing_cloudwatch_reports.py \
 
 ```bash
 python3 scripts/pull_billing_cloudwatch_reports.py \
+  --profile your-real-source-profile \
   --role-arn arn:aws:iam::123456789012:role/BillingRole \
   --hours 720 \
   --output-dir output/billing
@@ -69,6 +70,7 @@ python3 scripts/pull_database_instance_inventory.py \
 
 ```bash
 python3 scripts/pull_database_instance_inventory.py \
+  --profile your-real-source-profile \
   --role-arn arn:aws:iam::123456789012:role/DatabaseAdministrator \
   --region us-east-1 \
   --hours 24 \
@@ -85,3 +87,4 @@ python3 scripts/pull_database_instance_inventory.py \
 - Billing metrics are read from CloudWatch in `us-east-1` (`AWS/Billing` namespace).
 - The database script queries a single region at a time; run it per region if needed.
 - If your organization requires an external ID for role assumption, pass `--external-id`.
+- `source-profile` in examples is a placeholder. Use a real profile from `~/.aws/config` or `~/.aws/credentials`.
