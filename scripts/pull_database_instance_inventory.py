@@ -290,6 +290,7 @@ def write_outputs(
             "allocated_storage_gb",
             "multi_az",
             "storage_encrypted",
+            "arn",
             "name_tag",
             "cpu_average",
             "secondary_metric_a",
