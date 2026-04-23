@@ -37,12 +37,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Pull billing/report metrics from CloudWatch."
     )
-    auth_group = parser.add_mutually_exclusive_group()
-    auth_group.add_argument(
+    parser.add_argument(
         "--profile",
         help="AWS named profile that has Billing permissions.",
     )
-    auth_group.add_argument(
+    parser.add_argument(
         "--role-arn",
         help="IAM role ARN to assume for Billing data access.",
     )

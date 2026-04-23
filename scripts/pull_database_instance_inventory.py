@@ -23,12 +23,14 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Pull instance information with DatabaseAdministrator role."
     )
-    auth_group = parser.add_mutually_exclusive_group()
-    auth_group.add_argument(
+    parser.add_argument(
         "--profile",
-        help="AWS named profile that has database admin permissions.",
+        help=(
+            "AWS named profile used directly, or as the source profile "
+            "when --role-arn is provided."
+        ),
     )
-    auth_group.add_argument(
+    parser.add_argument(
         "--role-arn",
         help="IAM role ARN to assume for database inventory access.",
     )

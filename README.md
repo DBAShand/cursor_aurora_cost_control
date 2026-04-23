@@ -25,7 +25,7 @@ Yes, this is possible. This repository now includes two separate scripts:
 Install dependency if needed:
 
 ```bash
-python -m pip install boto3
+python3 -m pip install boto3
 ```
 
 ## Billing script (Billing role)
@@ -33,7 +33,7 @@ python -m pip install boto3
 ### Example: run with named profile
 
 ```bash
-python scripts/pull_billing_cloudwatch_reports.py \
+python3 scripts/pull_billing_cloudwatch_reports.py \
   --profile billing \
   --hours 720 \
   --output-dir output/billing
@@ -42,7 +42,7 @@ python scripts/pull_billing_cloudwatch_reports.py \
 ### Example: run by assuming role
 
 ```bash
-python scripts/pull_billing_cloudwatch_reports.py \
+python3 scripts/pull_billing_cloudwatch_reports.py \
   --role-arn arn:aws:iam::123456789012:role/BillingRole \
   --hours 720 \
   --output-dir output/billing
@@ -58,7 +58,7 @@ python scripts/pull_billing_cloudwatch_reports.py \
 ### Example: run with named profile
 
 ```bash
-python scripts/pull_database_instance_inventory.py \
+python3 scripts/pull_database_instance_inventory.py \
   --profile databaseadmin \
   --region us-east-1 \
   --hours 24 \
@@ -68,7 +68,7 @@ python scripts/pull_database_instance_inventory.py \
 ### Example: run by assuming role
 
 ```bash
-python scripts/pull_database_instance_inventory.py \
+python3 scripts/pull_database_instance_inventory.py \
   --role-arn arn:aws:iam::123456789012:role/DatabaseAdministrator \
   --region us-east-1 \
   --hours 24 \
